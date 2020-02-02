@@ -1,19 +1,28 @@
 package com.example.and_p4_bakeking.ui;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.example.and_p4_bakeking.R;
+import com.example.and_p4_bakeking.adapters.RecipeAdapter;
 import com.example.and_p4_bakeking.models.Recipe;
-import com.example.and_p4_bakeking.models.Step;
 import com.example.and_p4_bakeking.utilities.BakingRetrofitApi;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,10 +31,21 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecipeAdapter.RecipeAdapterClickHandler{
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private TextView textViewJsonResults;
+    private RecyclerView mRecipeRecyclerView;
+    private RecipeAdapter mRecipeAdapter;
+    private ArrayList<Recipe> recipeList;
+
+    //Constants for defining number of columns in the layoutManager
+    private final static int SPAN_COUNT_LAND = 2;
+
+
     private BakingRetrofitApi bakingRetrofitApi;
+    private ProgressBar mProgressBar;
+    private ConstraintLayout mErrorLayout;
+
 
     //Base URL For Retrofit http call
     private static final String JSON_BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
@@ -35,7 +55,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textViewJsonResults = findViewById(R.id.temp_json_results);
+        mRecipeRecyclerView = findViewById(R.id.main_recipe_rv);
+        mProgressBar = findViewById(R.id.main_progress_bar);
+        mErrorLayout = findViewById(R.id.main_error_parent);
+
+        //Initialize the RecipeAdapter and set it on the RecyclerView
+        mRecipeAdapter = new RecipeAdapter(recipeList, this);
+        mRecipeRecyclerView.setAdapter(mRecipeAdapter);
+
+        //Set a LayoutManager on the RecyclerView and set the number of columns based on orientation
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            mRecipeRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        } else {
+            mRecipeRecyclerView.setLayoutManager(new GridLayoutManager(this, SPAN_COUNT_LAND));
+        }
+        mRecipeRecyclerView.hasFixedSize();
 
         //Retrofit instantiation
         Retrofit retrofit = new Retrofit.Builder()
@@ -48,10 +82,15 @@ public class MainActivity extends AppCompatActivity {
         if (isNetworkConnected()) {
             getRecipesWithRetrofit();
         } else {
-            //Log error and show internet connectivity error message
+            showErrorMessage();
         }
 
+    }
 
+    private void showErrorMessage() {
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mRecipeRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorLayout.setVisibility(View.VISIBLE);               // cloud error image from <a href="https://www.vecteezy.com/free-vector/bed">Bed Vectors by Vecteezy</a>
     }
 
     private void getRecipesWithRetrofit() {
@@ -61,30 +100,18 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ArrayList<Recipe>> call, Response<ArrayList<Recipe>> response) {
                     if (!response.isSuccessful()) {
-                        textViewJsonResults.setText("Http response code: " + response.code());
+                        Log.d(LOG_TAG,"Retrofit Http response code: " + response.code());
                         return;
                     }
 
-                    ArrayList<Recipe> recipes = response.body();
+                    recipeList = response.body();
+                    mRecipeAdapter.refreshRecipeData(recipeList);
 
-                    for (Recipe recipe : recipes) {
-                        String content = "";
-                        content += "Id: " + recipe.getId() + "\n";
-                        content += "Name: " + recipe.getName() + "\n";
-                        for (Step step : recipe.getSteps()){
-                            content += "Step number: " + step.getId() + "\n";
-                            content += "Video: " + step.getVideoURL() + "\n\n";
-                        }
-
-                        textViewJsonResults.append(content);
                     }
-
-                }
 
                 @Override
                 public void onFailure(Call<ArrayList<Recipe>> call, Throwable t) {
-                    textViewJsonResults.setText(t.getMessage());
-
+                    Log.d(LOG_TAG, t.getMessage());
                 }
         });
     }
@@ -94,4 +121,13 @@ public class MainActivity extends AppCompatActivity {
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return manager.getActiveNetwork() != null && manager.getActiveNetworkInfo().isConnected();
     }
+
+    @Override
+    public void onListItemClick(Recipe clickedRecipe) {
+        Intent startDetailActivity = new Intent(this, DetailActivity.class);
+        startDetailActivity.putExtra(DetailActivity.RECIPE_PARCEL, clickedRecipe);
+        startActivity(startDetailActivity);
+    }
+
+
 }
