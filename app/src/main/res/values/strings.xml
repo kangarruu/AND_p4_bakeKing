@@ -14,14 +14,18 @@
 
     <!-- fragment_ingredients Strings-->
     <string name="frag_ingredients_label">Ingredients</string>
-    <string name="step_list_item_btn_continue">Continue</string>
-    <string name="step_list_item_btn_back">Back</string>
+
 
 
     <!-- fragment_exoplayer Strings-->
 
 
     <!-- fragment_steps Strings-->
+    <string name="step_list_item_btn_next">Next</string>
+    <string name="step_list_item_btn_back">Back</string>
+    <string name="step_list_item_btn_lets_go">Let\'s go!</string>
+    <string name="step_btn_last_step">You\'ve reached the last step.</string>
+
 
 
 
