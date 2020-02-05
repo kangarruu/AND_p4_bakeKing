@@ -14,6 +14,8 @@
 
     <!-- fragment_ingredients Strings-->
     <string name="frag_ingredients_label">Ingredients</string>
+    <string name="step_list_item_btn_continue">Continue</string>
+    <string name="step_list_item_btn_back">Back</string>
 
 
     <!-- fragment_exoplayer Strings-->
