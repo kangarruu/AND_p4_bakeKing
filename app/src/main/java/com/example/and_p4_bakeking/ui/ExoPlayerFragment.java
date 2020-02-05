@@ -107,7 +107,8 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
         mMediaSession.setActive(true);
     }
 
-
+    //Initialize the Exoplayer
+    //@param Uri of the video to play
     private void initMediaPlayer(Uri videoUri) {
         if (mExoplayer == null){
         //Create an instance of the Exoplayer
@@ -156,22 +157,8 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
     }
 
 
-    //Exoplayer Event listeners
-    @Override
-    public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-
-    }
-
-    @Override
-    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
-    }
-
-    @Override
-    public void onLoadingChanged(boolean isLoading) {
-
-    }
-
+    //Exoplayer state change listener, called whenever the stage changes regardless of source
+    //Updates the MediaSession to keep playback in sync
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if((playbackState == Player.STATE_READY) && playWhenReady) {
@@ -185,16 +172,6 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
 
     }
 
-
-    @Override
-    public void onPlayerError(ExoPlaybackException error) {
-
-    }
-
-    @Override
-    public void onPositionDiscontinuity(int reason) {
-
-    }
 
     //Media Session callbacks for external clients
     private class PlayerSessionCallback extends MediaSessionCompat.Callback {
