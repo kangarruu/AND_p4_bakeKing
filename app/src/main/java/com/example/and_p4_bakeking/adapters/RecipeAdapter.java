@@ -16,7 +16,7 @@ import com.example.and_p4_bakeking.models.Recipe;
 import java.util.ArrayList;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeAdapterViewHolder> {
-    private static final String TAG = RecipeAdapter.class.getSimpleName();
+    private static final String LOG_TAG = RecipeAdapter.class.getSimpleName();
 
     private ArrayList<Recipe> mRecipeList;
     private RecipeAdapterClickHandler mClickHandler;

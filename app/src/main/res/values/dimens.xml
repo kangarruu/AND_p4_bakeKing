@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="list_item_recipe_image_height">350dp</dimen>
+    <dimen name="detail_activity_ingredients_container_height">180dp</dimen>
+    <dimen name="detail_activity_ingredients_container_marginTop">32dp</dimen>
+    <dimen name="detail_activity_exoPlayer_container_height">150dp</dimen>
+    <dimen name="detail_activity_exoPlayer_container_marginTop">32dp</dimen>
 </resources>
