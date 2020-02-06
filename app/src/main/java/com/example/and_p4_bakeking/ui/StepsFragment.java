@@ -115,11 +115,14 @@ public class StepsFragment extends Fragment implements IStepperAdapter {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mStepperView.prevStep();
+                if (position != 0) {
+                    mStepperView.prevStep();
+                } else {
+                    mStepperView.setAnimationEnabled(!mStepperView.isAnimationEnabled());
+                }
+
             }
         });
-
-
 
         return viewToInflate;
     }
@@ -133,4 +136,6 @@ public class StepsFragment extends Fragment implements IStepperAdapter {
     public void onHide(int i) {
 
     }
+
+
 }
