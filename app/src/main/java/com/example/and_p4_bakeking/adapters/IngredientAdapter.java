@@ -14,6 +14,7 @@ import com.example.and_p4_bakeking.models.Ingredient;
 
 import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,12 +50,15 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
         Ingredient currentIngredient = mIngredientsList.get(position);
         //Bind the ingredient details to the UI
         String ingredient = currentIngredient.getIngredient();
-        Double quantity = currentIngredient.getQuantity();
-        String measure = currentIngredient.getMeasure();
-
         holder.ingredientView.setText(ingredient);
+
+        Double quantity = currentIngredient.getQuantity();
+        //Remove trailing 0s
+        DecimalFormat format = new DecimalFormat("0.##");
+        holder.quantityView.setText(String.valueOf(format.format(quantity)));
+
+        String measure = currentIngredient.getMeasure();
         holder.measureView.setText(measure);
-        holder.quantityView.setText(String.valueOf(quantity));
 
     }
 

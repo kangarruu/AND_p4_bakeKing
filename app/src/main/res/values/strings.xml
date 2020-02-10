@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">AND_p4_bakeKing</string>
+    <string name="app_name">BakeKing</string>
 
     <!-- MainActivity Strings-->
     <string name="main_error_whoops">Whoops</string>
     <string name="main_error_unable_to_load">No internet found. Check your connection or try again.</string>
 
-    <!-- DetailActivity Strings-->
+    <!-- StepsActivity Strings-->
 
 
     <!-- List_item Strings-->
@@ -20,11 +20,11 @@
     <!-- fragment_exoplayer Strings-->
 
 
-    <!-- fragment_steps Strings-->
+    <!-- StepsActivity Strings-->
     <string name="step_list_item_btn_next">Next</string>
     <string name="step_list_item_btn_back">Back</string>
     <string name="step_list_item_btn_lets_go">Let\'s go!</string>
-    <string name="step_btn_last_step">You\'ve reached the last step.</string>
+    <string name="step_gather_ingredients"> Let\'s prep the ingredients</string>
 
 
 

@@ -1,6 +1,7 @@
 package com.example.and_p4_bakeking.ui;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -9,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,6 +49,8 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
 
     private static final String STEP_BUNDLE_KEY = "step_bundle_key";
     private static final String CURRENT_STEP_STATE = "step_state";
+    private static final String PLAYER_IS_READY_KEY = "player_ready";
+    private static final String PLAYER_CURRENT_POS_KEY = "current_position";
     private SimpleExoPlayer mExoplayer;
     private PlayerView mPlayerView;
     private Step mCurrentStep;
@@ -75,21 +80,23 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View rootView =  inflater.inflate(R.layout.fragment_exoplayer, container, false);
         mPlayerView = rootView.findViewById(R.id.playerView);
 
-        //Hide the playView if there is no video
-        //Otherwise initialize the mediaPlayer
-        if (mCurrentStep.getVideoURL().equals("")){
-                mPlayerView.setVisibility(View.GONE);
+        //Check if a video is already playing and seek Exoplayer there
+        if (savedInstanceState != null){
+            mExoplayer.setPlayWhenReady(savedInstanceState.getBoolean(PLAYER_IS_READY_KEY));
+            mExoplayer.seekTo(savedInstanceState.getLong(PLAYER_CURRENT_POS_KEY));
         } else {
             //Parse the currentStep video url into a uri and init the MediaPlayer & MediaSession
             initMediaSession();
             initMediaPlayer(Uri.parse(mCurrentStep.getVideoURL()));
-        }
 
-        return rootView;
+        } return rootView;
+
+
     }
 
     //Initalize MediaSession to enable callback for external clients
@@ -110,6 +117,7 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
     //Initialize the Exoplayer
     //@param Uri of the video to play
     private void initMediaPlayer(Uri videoUri) {
+
         if (mExoplayer == null){
         //Create an instance of the Exoplayer
             TrackSelector trackSelector = new DefaultTrackSelector();
@@ -126,6 +134,7 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
                     .createMediaSource(videoUri);
             mExoplayer.prepare(mediaSource);
             mExoplayer.setPlayWhenReady(false);
+
         }
     }
 
@@ -139,6 +148,15 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        releasePlayer();
+        if (mMediaSession != null) {
+            mMediaSession.setActive(false);
+        }
+    }
+
     //Release the player when the activity is destroyed
     @Override
     public void onDestroy() {
@@ -149,11 +167,20 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+
     //Save the state of the app so video could be retrieved on rotation
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(CURRENT_STEP_STATE, mCurrentStep);
+        //Save the current position of the playing video
+        outState.putLong(PLAYER_CURRENT_POS_KEY, Math.max(0, mExoplayer.getCurrentPosition()));
+        outState.putBoolean(PLAYER_IS_READY_KEY, mExoplayer.getPlayWhenReady());
     }
 
 
@@ -161,6 +188,7 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
     //Updates the MediaSession to keep playback in sync
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        mPlayerView.hideController();
         if((playbackState == Player.STATE_READY) && playWhenReady) {
             mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
                     mExoplayer.getCurrentPosition(), 1f);
@@ -190,7 +218,13 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
             mExoplayer.seekTo(0);
         }
 
-
     }
+
+    public void setCurrentStep (Step currentStep){
+        mCurrentStep = currentStep;
+    }
+
+
+
 
 }

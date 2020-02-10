@@ -1,35 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/stepper_content_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp" />
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/stepper_next_btn"
+        <!--Exoplayer fragment container-->
+        <FrameLayout
+            android:id="@+id/exoPlayer_frag_container"
+            android:layout_width="match_parent"
+            android:layout_height="256dp"
+            android:layout_marginTop="12dp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/stepper_content_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/material_blue_500"
-            android:textColor="@android:color/white"
-            android:text="@string/step_list_item_btn_next"/>
+            android:layout_marginTop="12dp" />
 
-        <Button
-            android:id="@+id/stepper_back_btn"
-            android:layout_width="wrap_content"
+        <!--Ingredients fragment container-->
+        <FrameLayout
+            android:id="@+id/ingredient_frag_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:visibility="visible"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/step_list_item_btn_back"/>
+            android:layout_marginTop="24dp">
+
+            <Button
+                android:id="@+id/stepper_back_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/step_list_item_btn_back"
+                app:layout_constraintBottom_toBottomOf="@+id/stepper_next_btn"
+                app:layout_constraintStart_toEndOf="@+id/stepper_next_btn"
+                app:layout_constraintTop_toTopOf="@+id/stepper_next_btn" />
+
+            <Button
+                android:id="@+id/stepper_next_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/material_blue_500"
+                android:text="@string/step_list_item_btn_next"
+                android:textColor="@android:color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</layout>

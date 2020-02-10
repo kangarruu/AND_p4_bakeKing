@@ -1,7 +1,7 @@
 package com.example.and_p4_bakeking.ui;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,13 +14,15 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.and_p4_bakeking.R;
 import com.example.and_p4_bakeking.adapters.RecipeAdapter;
 import com.example.and_p4_bakeking.models.Recipe;
 import com.example.and_p4_bakeking.utilities.BakingRetrofitApi;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -33,6 +35,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements RecipeAdapter.RecipeAdapterClickHandler{
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
 
     private RecyclerView mRecipeRecyclerView;
     private RecipeAdapter mRecipeAdapter;
@@ -124,8 +127,8 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
     @Override
     public void onListItemClick(Recipe clickedRecipe) {
-        Intent startDetailActivity = new Intent(this, DetailActivity.class);
-        startDetailActivity.putExtra(DetailActivity.RECIPE_PARCEL, clickedRecipe);
+        Intent startDetailActivity = new Intent(this, StepsActivity.class);
+        startDetailActivity.putExtra(StepsActivity.RECIPE_PARCEL, clickedRecipe);
         startActivity(startDetailActivity);
     }
 

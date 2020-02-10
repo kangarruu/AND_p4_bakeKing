@@ -45,8 +45,7 @@ public class IngredientsFragment extends Fragment {
 
         Bundle bundle = this.getArguments();
         if(bundle != null){
-            mCurrentRecipe = bundle.getParcelable(BUNDLE_KEY);
-            mIngredientsList = mCurrentRecipe.getIngredients();
+            mIngredientsList = bundle.getParcelableArrayList(BUNDLE_KEY);
         }
     }
 
@@ -68,9 +67,4 @@ public class IngredientsFragment extends Fragment {
         return rootView;
     }
 
-    private void setIngredientsListOnAdapter() {
-        if(mIngredientsList != null){
-            mIngredientAdapter.refreshIngredientsData(mIngredientsList);
-        }
-    }
 }
