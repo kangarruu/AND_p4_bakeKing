@@ -8,3 +8,5 @@ Polygonal Cloud Computing Concept image by <a href="https://www.vecteezy.com/vec
  by nightwolfdezines from Vecteezy</a>
  
  Recipe default image by <a href="https://www.pexels.com/photo/board-bunch-cooking-food-349609/">Lukas from Pexels</a>
+
+Widget background vector  <a href="https://www.freepik.com/free-photos-vectors/background">created by freepik</a>
