@@ -1,6 +1,7 @@
 package com.example.and_p4_bakeking.utilities;
 
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -103,6 +104,8 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
             remoteViews.setTextViewText(R.id.widget_item_quantity_tv, quantity);
             remoteViews.setTextViewText(R.id.widget_item_measure_tv, measure);
 
+            updateRecipeTitle();
+
             return remoteViews;
         }
 
@@ -125,5 +128,20 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
         public boolean hasStableIds() {
             return true;
         }
+
+        private void updateRecipeTitle() {
+            RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.recipe_widget);
+
+            String recipeName = mRecipe.getName();
+            AppWidgetManager widgetManager = AppWidgetManager.getInstance(mContext);
+            int[] appWidgetIds = widgetManager.getAppWidgetIds(new ComponentName(mContext, RecipeWidgetProvider.class));
+            remoteViews.setTextViewText(R.id.widget_recipe_name_tv, recipeName);
+            widgetManager.updateAppWidget(appWidgetIds, remoteViews);
+
+
+
+        }
     }
+
+
 }

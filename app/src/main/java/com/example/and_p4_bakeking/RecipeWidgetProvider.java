@@ -36,6 +36,11 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget);
 
+        //Create an intent to launch MainActivity when widget is clicked
+        Intent clickIntent = new Intent(context, MainActivity.class);
+        PendingIntent launchMainActivity = PendingIntent.getActivity(context, 0, clickIntent, 0);
+        views.setOnClickPendingIntent(R.id.widget_parent_main, launchMainActivity);
+
         Intent intent = new Intent(context, WidgetRemoteViewsService.class);
         //Add the app widget ID to the intent extras
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
