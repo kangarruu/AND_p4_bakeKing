@@ -8,11 +8,12 @@
 
     <TextView
         android:id="@+id/widget_recipe_name_tv"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:textAppearance="@android:style/TextAppearance.Material.DialogWindowTitle"
-        tools:text="@string/widget_tools_recipe_name" />
+        tools:text="@string/widget_tools_recipe_name"
+        android:textSize="18sp"
+        android:layout_gravity="center"/>
 
     <FrameLayout
         android:id="@+id/widget_parent"

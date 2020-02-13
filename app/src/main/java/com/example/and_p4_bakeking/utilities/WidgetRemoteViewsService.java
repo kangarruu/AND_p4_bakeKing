@@ -24,6 +24,7 @@ import java.util.List;
 public class WidgetRemoteViewsService extends RemoteViewsService {
 
     private static final String LOG_TAG = WidgetRemoteViewsService.class.getSimpleName();
+    private static final String RECIPE_NAME_KEY = "intent_recipe_extra";
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
@@ -61,6 +62,7 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
                 mRecipe = gson.fromJson(recipeJson, type);
                 mIngredientsList = mRecipe.getIngredients();
             }
+
         }
 
         @Override
@@ -88,9 +90,6 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
             String ingredient = mIngredientsList.get(position).getIngredient();
             String quantity = format.format(mIngredientsList.get(position).getQuantity());
             String measure = mIngredientsList.get(position).getMeasure();
-            Log.d(LOG_TAG, "measure: " + measure);
-            Log.d(LOG_TAG, "measure: " + (measure.equals(getString(R.string.widget_measure_text_unit))));
-
 
             if (measure.equals(getString(R.string.widget_measure_text_unit))){
                 remoteViews.setViewVisibility(R.id.widget_item_measure_tv, View.INVISIBLE);

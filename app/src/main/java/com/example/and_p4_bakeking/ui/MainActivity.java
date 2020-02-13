@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.RemoteViews;
 
 import com.example.and_p4_bakeking.R;
 import com.example.and_p4_bakeking.RecipeWidgetProvider;
@@ -35,6 +36,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static java.security.AccessController.getContext;
 
 
 public class MainActivity extends AppCompatActivity implements RecipeAdapter.RecipeAdapterClickHandler {
