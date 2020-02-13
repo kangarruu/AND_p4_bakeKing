@@ -7,12 +7,16 @@ import androidx.fragment.app.FragmentManager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewOverlay;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.and_p4_bakeking.R;
 import com.example.and_p4_bakeking.models.Recipe;
 import com.example.and_p4_bakeking.models.Step;
@@ -23,13 +27,15 @@ import moe.feng.common.stepperview.IStepperAdapter;
 import moe.feng.common.stepperview.VerticalStepperItemView;
 import moe.feng.common.stepperview.VerticalStepperView;
 
-public class StepsActivity extends AppCompatActivity implements IStepperAdapter{
+public class StepsActivity extends AppCompatActivity implements IStepperAdapter {
     private static final String LOG_TAG = StepsActivity.class.getSimpleName();
 
     public static final String RECIPE_PARCEL = "recipe_parcel_key";
+    public static final String STEP_PARCEL = "step_parcel_key";
     private static final String BUNDLE_KEY = "bundle_key";
     private static final String STEP_BUNDLE_KEY = "step_bundle_key";
     private static final String RECIPE_STATE_KEY = "recipe_state";
+
     private Recipe mRecipeSelected;
     private Step currentStepObject;
     ArrayList<Step> mStepsList;
@@ -38,8 +44,8 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter{
     ExoPlayerFragment exoPlayerFragment;
     IngredientsFragment ingredientsFragment;
     StepsFragment stepsFragment;
-    View mExoplayerView;
     View mIngredientsView;
+    View mExoplayerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +82,7 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter{
 
         //For tablet layouts launch the ingredientsFragment
         // for display outside of the stepper
-        if (getResources().getConfiguration().smallestScreenWidthDp >= 600){
+        if (isTabletLayout()){
             updateCurrentStep();
             launchIngredientsFragment();
         }
@@ -117,43 +123,59 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter{
 
         View viewToInflate = LayoutInflater.from(context).inflate(R.layout.stepper_list_item, parent, false);
 
-        //For phone layouts, inflate the exoplayerFragment inside the stepper
-        //If the selected step has no video, set the fragment visibility to GONE
-        if (getResources().getConfiguration().smallestScreenWidthDp <= 600) {
-            mExoplayerView = viewToInflate.findViewById(R.id.exoPlayer_frag_container);
+        Button nextButton = viewToInflate.findViewById(R.id.stepper_next_btn);
+        Button backButton = viewToInflate.findViewById(R.id.stepper_back_btn);
+        TextView contentView = viewToInflate.findViewById(R.id.stepper_content_tv);
+        ImageView thumbnailIv = viewToInflate.findViewById(R.id.stepper_video_thumbnail_iv);
+
+        //set the contentView to display the step description
+        contentView.setText(currentStepObject.getDescription());
+
+        //For phone layouts, if the current step has a video, set a thumbnail
+        //Otherwise, hide the imageView
+        if (!isTabletLayout()) {
             if (currentStepObject.hasVideo()) {
-                mExoplayerView.setVisibility(View.VISIBLE);
+                Glide.with(context)
+                        .load(currentStepObject.getVideoURL())
+                        .into(thumbnailIv);
+
+                //launch the videoActivity when thumbnail is clicked
+                thumbnailIv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent launchVideoActivity = new Intent(context, VideoActivity.class);
+                        launchVideoActivity.putExtra(STEP_PARCEL, currentStepObject);
+                        startActivity(launchVideoActivity);
+                    }
+
+                });
             } else {
-                mExoplayerView.setVisibility(View.GONE);
+                thumbnailIv.setVisibility(View.GONE);
             }
         }
 
-        //set the contents textview to display the step description
-        TextView contentView = viewToInflate.findViewById(R.id.stepper_content_tv);
-        contentView.setText(currentStepObject.getDescription());
-
-        Button nextButton = viewToInflate.findViewById(R.id.stepper_next_btn);
-        Button backButton = viewToInflate.findViewById(R.id.stepper_back_btn);
-
-        if (currentStepObject.getId() == 0){
-            //change the initial text of the nextButton & hide the content textview
+        //For the first step change the initial text of the nextButton & hide the content textview
+        //In phone layouts create the fragment that displays the ingredients inside the stepper
+        //In Tablet layouts change the contentView text to say "Let's prep the ingredients"
+        if (currentStepObject.getId() == 0) {
             nextButton.setText(getString(R.string.step_list_item_btn_lets_go));
             contentView.setVisibility(View.GONE);
-            //For phone layouts create the fragment that displays the ingredients in the first step
-            if (getResources().getConfiguration().smallestScreenWidthDp <= 600){
+
+            if (!isTabletLayout()){
                 launchIngredientsFragment();
-            //For tablets, change the contentView text
             } else {
                 contentView.setVisibility(View.VISIBLE);
                 contentView.setText(R.string.step_gather_ingredients);
             }
+        //hide the ingredientsFragment if it's not the first step
+        }  else {
+            hideIngredientsFragment();
+        }
+
         //Adjust tint of the buttons during last step
-        } else if(currentStepObject.getId() == mStepsList.size() -1) {
+        if(currentStepObject.getId() == mStepsList.size() -1) {
             nextButton.setBackgroundTintList(getResources().getColorStateList(R.color.material_grey_500));
             backButton.setBackgroundTintList(getResources().getColorStateList(R.color.material_blue_500));
-        //hide the ingredientsFragment if it's not the first step
-        } else {
-            hideIngredientsFragment();
         }
 
         //Set the clickListeners
@@ -193,7 +215,7 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter{
     }
 
     private void hideIngredientsFragment() {
-        if (getResources().getConfiguration().smallestScreenWidthDp >= 600){
+        if (isTabletLayout()){
             mIngredientsView.setVisibility(View.GONE);
             launchStepFragment();
         }
@@ -224,11 +246,18 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter{
     private void updateCurrentStep(){
         int stepPosition = mStepperView.getCurrentStep();
         currentStepObject = mStepsList.get(stepPosition);
-        if (currentStepObject.hasVideo()) {
+        if (isTabletLayout() && currentStepObject.hasVideo()) {
             launchExoplayerFragment();
         }
 
+    }
 
+    public Boolean isTabletLayout(){
+        if (getResources().getConfiguration().smallestScreenWidthDp >= 600){
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -247,4 +276,5 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter{
         super.onSaveInstanceState(outState);
         outState.putParcelable(RECIPE_STATE_KEY, mRecipeSelected);
     }
+
 }

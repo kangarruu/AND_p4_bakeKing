@@ -1,0 +1,45 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/widget_background">
+
+    <TextView
+        android:id="@+id/widget_recipe_name_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:textAppearance="@android:style/TextAppearance.Material.DialogWindowTitle"
+        tools:text="@string/widget_tools_recipe_name" />
+
+    <FrameLayout
+        android:id="@+id/widget_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="8dp"
+        android:layout_gravity="center">
+
+        <ListView
+            android:id="@+id/widget_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/widget_empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray"
+            android:gravity="center"
+            android:text="@string/widget_empty_view_text"
+            android:textColor="#ffff"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:visibility="invisible" />
+
+    </FrameLayout>
+
+</LinearLayout>

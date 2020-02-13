@@ -45,5 +45,5 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_begin="347dp" />
+        app:layout_constraintGuide_end="64dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

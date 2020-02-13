@@ -16,7 +16,6 @@
     <string name="frag_ingredients_label">Ingredients</string>
 
 
-
     <!-- fragment_exoplayer Strings-->
 
 
@@ -25,12 +24,16 @@
     <string name="step_list_item_btn_back">Back</string>
     <string name="step_list_item_btn_lets_go">Let\'s go!</string>
     <string name="step_gather_ingredients"> Let\'s prep the ingredients</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="widget_tools_recipe_name">recipe name</string>
+    <string name="widget_empty_view_text">Nothing to see yet</string>
 
-
-
-
-
-    <!-- MainActivity Strings-->
+    <!--Widget Strings-->
+    <string name="widget_tools_ingredient_text">Nutella or other chocolate-hazelnut spread</string>
+    <string name="widget_tools_quantity_text">350</string>
+    <string name="widget_tools_measure_text">TBLSP</string>
+    <string name="widget_measure_text_unit">UNIT</string>
 
 
 

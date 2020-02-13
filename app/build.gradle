@@ -44,12 +44,11 @@ dependencies {
 
     //Testing dependencies
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'androidx.test.espresso:espresso-idling-resource:3.2.0'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-
-
 
     //Retrofit and GSON
     implementation 'com.squareup.retrofit2:retrofit:2.7.1'
@@ -60,4 +59,8 @@ dependencies {
 
     //Vertical stepper
     implementation 'moe.feng:MaterialStepperView:0.2.4.2'
+
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 }

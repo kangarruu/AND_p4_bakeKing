@@ -93,8 +93,9 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
             //Parse the currentStep video url into a uri and init the MediaPlayer & MediaSession
             initMediaSession();
             initMediaPlayer(Uri.parse(mCurrentStep.getVideoURL()));
+        }
 
-        } return rootView;
+        return rootView;
 
 
     }
@@ -117,7 +118,6 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
     //Initialize the Exoplayer
     //@param Uri of the video to play
     private void initMediaPlayer(Uri videoUri) {
-
         if (mExoplayer == null){
         //Create an instance of the Exoplayer
             TrackSelector trackSelector = new DefaultTrackSelector();
@@ -133,7 +133,11 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
             MediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                     .createMediaSource(videoUri);
             mExoplayer.prepare(mediaSource);
-            mExoplayer.setPlayWhenReady(false);
+            if (getResources().getConfiguration().smallestScreenWidthDp >= 600){
+                mExoplayer.setPlayWhenReady(false);
+            }else {
+                mExoplayer.setPlayWhenReady(true);
+            }
 
         }
     }
@@ -192,9 +196,13 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
         if((playbackState == Player.STATE_READY) && playWhenReady) {
             mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
                     mExoplayer.getCurrentPosition(), 1f);
-        }else if ((playbackState == Player.STATE_READY)){
+        } else if ((playbackState == Player.STATE_READY)){
             mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
                     mExoplayer.getCurrentPosition(), 1f);
+        } else if(playbackState == Player.STATE_ENDED){
+            if (getResources().getConfiguration().smallestScreenWidthDp <= 600){
+                getActivity().onBackPressed();
+            }
         }
         mMediaSession.setPlaybackState(mStateBuilder.build());
 
@@ -219,11 +227,6 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
         }
 
     }
-
-    public void setCurrentStep (Step currentStep){
-        mCurrentStep = currentStep;
-    }
-
 
 
 

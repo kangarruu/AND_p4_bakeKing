@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:visibility="visible"/>
 
-        <!--Step fragment container-->
+        <!--Steps fragment container-->
         <FrameLayout
             android:id="@+id/steps_frag_container"
             android:layout_width="match_parent"

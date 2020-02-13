@@ -5,4 +5,7 @@
     <dimen name="detail_activity_ingredients_container_marginTop">32dp</dimen>
     <dimen name="detail_activity_exoPlayer_container_height">150dp</dimen>
     <dimen name="detail_activity_exoPlayer_container_marginTop">32dp</dimen>
+
+
+    <dimen name="widget_padding">24dp</dimen>
 </resources>

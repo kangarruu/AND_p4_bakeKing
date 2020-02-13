@@ -10,26 +10,52 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity">
+
+        <receiver android:name=".RecipeWidgetProvider"
+            android:permission="android.permission.BIND_REMOTEVIEWS">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/recipe_widget_provider_info" />
+        </receiver>
+
+        <activity android:name=".ui.MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.StepsActivity"
-            android:parentActivityName=".ui.MainActivity"
 
+        <activity
+            android:name=".ui.StepsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|layoutDirection"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity"/>
-
+                android:value=".ui.MainActivity" />
         </activity>
+
+        <activity
+            android:name=".ui.VideoActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|layoutDirection"
+            android:parentActivityName=".ui.StepsActivity"
+            android:theme="@style/Theme.NoTitle">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.StepsActivity" />
+        </activity>
+
+        <service android:name=".utilities.WidgetRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
     </application>
 
 </manifest>
