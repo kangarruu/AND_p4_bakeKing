@@ -53,15 +53,24 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeAdap
 
     @Override
     public int getItemCount() {
-        if(null == mRecipeList){
+        if (null == mRecipeList) {
             return 0;
         } else {
             return mRecipeList.size();
         }
     }
 
+    public void refreshRecipeData(ArrayList<Recipe> recipeData) {
+        mRecipeList = recipeData;
+        notifyDataSetChanged();
+    }
+
+    public interface RecipeAdapterClickHandler {
+        void onListItemClick(Recipe clickedRecipe);
+    }
+
     //Locates and stores the necessary views for each Recipe list item
-    public class RecipeAdapterViewHolder extends  RecyclerView.ViewHolder implements View.OnClickListener{
+    public class RecipeAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView mRecipeIv;
         private TextView mRecipeNameTv;
 
@@ -79,14 +88,5 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeAdap
             Recipe clickedRecipe = mRecipeList.get(itemPosition);
             mClickHandler.onListItemClick(clickedRecipe);
         }
-    }
-
-    public interface RecipeAdapterClickHandler {
-        void onListItemClick(Recipe clickedRecipe);
-    }
-
-    public void refreshRecipeData(ArrayList<Recipe> recipeData){
-        mRecipeList = recipeData;
-        notifyDataSetChanged();
     }
 }

@@ -12,13 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.and_p4_bakeking.R;
 import com.example.and_p4_bakeking.models.Ingredient;
 
-import org.w3c.dom.Text;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
-
-import static java.lang.StrictMath.ceil;
 
 public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.IngredientAdapterViewHolder> {
     private static final String LOG_TAG = IngredientAdapter.class.getSimpleName();
@@ -71,6 +66,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
         }
     }
 
+
     public class IngredientAdapterViewHolder extends RecyclerView.ViewHolder {
         private TextView ingredientView;
         private TextView quantityView;
@@ -82,11 +78,6 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.In
             quantityView = itemView.findViewById(R.id.ing_list_item_quantity_tv);
             measureView = itemView.findViewById(R.id.ing_list_item_measure_tv);
         }
-    }
-
-    public void refreshIngredientsData(ArrayList<Ingredient> ingredientData){
-        mIngredientsList = ingredientData;
-        notifyDataSetChanged();
     }
 
 }

@@ -127,11 +127,7 @@ public class Step implements Parcelable {
 
     //Helper method to determine if Step has a video
     public Boolean hasVideo() {
-        if (!getVideoURL().equals("")) {
-            return true;
-        } else {
-            return false;
-        }
+        return !getVideoURL().equals("");
     }
 
 }

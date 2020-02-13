@@ -5,8 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -32,14 +30,14 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
         return new WidgetRemoteViewsFactory(this.getApplicationContext(), intent);
     }
 
-    class WidgetRemoteViewsFactory implements  RemoteViewsService.RemoteViewsFactory {
-        private Context mContext;
+    class WidgetRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
+        private static final String SHARED_PREFS = "shared_preferences";
+        private static final String SP_RECIPE_KEY = "shared_prefs_recipe_key";
         SharedPreferences sharedPrefs;
+        private Context mContext;
         private List<Ingredient> mIngredientsList;
         private Recipe mRecipe;
         private int mWidgetId;
-        private static final String SHARED_PREFS = "shared_preferences";
-        private static final String SP_RECIPE_KEY = "shared_prefs_recipe_key";
 
 
         public WidgetRemoteViewsFactory(Context applicationContext, Intent intent) {
@@ -51,15 +49,16 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
         @Override
         public void onCreate() {
 
-            sharedPrefs= getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+            sharedPrefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         }
 
         @Override
         public void onDataSetChanged() {
             Gson gson = new Gson();
             String recipeJson = sharedPrefs.getString(SP_RECIPE_KEY, null);
-            Type type = new TypeToken<Recipe>() {}.getType();
-            if(recipeJson != null){
+            Type type = new TypeToken<Recipe>() {
+            }.getType();
+            if (recipeJson != null) {
                 mRecipe = gson.fromJson(recipeJson, type);
                 mIngredientsList = mRecipe.getIngredients();
             }
@@ -73,7 +72,7 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
 
         @Override
         public int getCount() {
-            if (mIngredientsList == null){
+            if (mIngredientsList == null) {
                 return 0;
             } else {
                 return mIngredientsList.size();
@@ -92,10 +91,10 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
             String quantity = format.format(mIngredientsList.get(position).getQuantity());
             String measure = mIngredientsList.get(position).getMeasure();
 
-            if (measure.equals(getString(R.string.widget_measure_text_unit))){
+            //Hide the measure if it == "unit"
+            if (measure.equals(getString(R.string.widget_measure_text_unit))) {
                 remoteViews.setViewVisibility(R.id.widget_item_measure_tv, View.INVISIBLE);
-            }
-            else {
+            } else {
                 remoteViews.setViewVisibility(R.id.widget_item_measure_tv, View.VISIBLE);
             }
 
@@ -129,6 +128,7 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
             return true;
         }
 
+        //update the recipe title to match the current recipe
         private void updateRecipeTitle() {
             RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.recipe_widget);
 
@@ -137,7 +137,6 @@ public class WidgetRemoteViewsService extends RemoteViewsService {
             int[] appWidgetIds = widgetManager.getAppWidgetIds(new ComponentName(mContext, RecipeWidgetProvider.class));
             remoteViews.setTextViewText(R.id.widget_recipe_name_tv, recipeName);
             widgetManager.updateAppWidget(appWidgetIds, remoteViews);
-
 
 
         }

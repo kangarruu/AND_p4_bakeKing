@@ -1,10 +1,13 @@
 package com.example.and_p4_bakeking.ui;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.annotation.VisibleForTesting;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -20,13 +23,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.RemoteViews;
 
 import com.example.and_p4_bakeking.R;
 import com.example.and_p4_bakeking.RecipeWidgetProvider;
 import com.example.and_p4_bakeking.adapters.RecipeAdapter;
 import com.example.and_p4_bakeking.models.Recipe;
 import com.example.and_p4_bakeking.utilities.BakingRetrofitApi;
+import com.example.and_p4_bakeking.utilities.EspressoIdlingResource;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -36,8 +39,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import static java.security.AccessController.getContext;
 
 
 public class MainActivity extends AppCompatActivity implements RecipeAdapter.RecipeAdapterClickHandler {
@@ -55,10 +56,17 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
     private ProgressBar mProgressBar;
     private ConstraintLayout mErrorLayout;
 
+    //For Espresso testing
+    @Nullable
+    private EspressoIdlingResource mIdlingResource;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Get an idlingResource object for testing
+        getIdlingResource();
 
         mRecipeRecyclerView = findViewById(R.id.main_recipe_rv);
         mProgressBar = findViewById(R.id.main_progress_bar);
@@ -86,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
         if (isNetworkConnected()) {
             getRecipesWithRetrofit();
+            //Set the idlingResource to false to indicate long running task
+            mIdlingResource.setIdleState(false);
         } else {
             showErrorMessage();
         }
@@ -111,12 +121,14 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
                 recipeList = response.body();
                 mRecipeAdapter.refreshRecipeData(recipeList);
+                mIdlingResource.setIdleState(true);
 
             }
 
             @Override
             public void onFailure(Call<ArrayList<Recipe>> call, Throwable t) {
                 Log.d(LOG_TAG, t.getMessage());
+                mIdlingResource.setIdleState(true);
             }
         });
     }
@@ -140,22 +152,23 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
             } else {
                 NetworkInfo activeNetwork = manager.getActiveNetworkInfo();
                 if (activeNetwork != null) {
-                    if (activeNetwork.getType() == manager.TYPE_WIFI) {
+                    if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
                         result = true;
-                    } else if (activeNetwork.getType() == manager.TYPE_MOBILE) {
+                    } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
                         result = true;
                     }
                 }
 
             }
-        } return result;
+        }
+        return result;
 
     }
 
     @Override
     public void onListItemClick(Recipe clickedRecipe) {
         //Save the recipe details into Shared preferences and notify the widgetManager that the data has changed
-        SaveRecipeUpdateWidget(clickedRecipe);
+        saveRecipeUpdateWidget(clickedRecipe);
 
         Intent startDetailActivity = new Intent(this, StepsActivity.class);
         startDetailActivity.putExtra(StepsActivity.RECIPE_PARCEL, clickedRecipe);
@@ -163,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
     }
 
     //helper method for saving the clicked Recipe object into shared preferences as a Json String
-    private void SaveRecipeUpdateWidget(Recipe recipe) {
+    public void saveRecipeUpdateWidget(Recipe recipe) {
         SharedPreferences sharedPrefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPrefs.edit();
         Gson gson = new Gson();
@@ -176,6 +189,17 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
         int[] appWidgetIds = widgetManager.getAppWidgetIds(new ComponentName(this, RecipeWidgetProvider.class));
         widgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_listview);
 
+    }
+
+
+    //Only called from test, creates and returns a new EspressoIdlingResource
+    @VisibleForTesting
+    @NonNull
+    public EspressoIdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new EspressoIdlingResource();
+        }
+        return mIdlingResource;
     }
 
 

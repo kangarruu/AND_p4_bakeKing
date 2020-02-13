@@ -35,6 +35,8 @@
     <string name="widget_tools_measure_text">TBLSP</string>
     <string name="widget_measure_text_unit">UNIT</string>
 
+    <!--Testing Strings    -->
+    <string name="test_element_string">Nutella Pie</string>
 
 
 </resources>

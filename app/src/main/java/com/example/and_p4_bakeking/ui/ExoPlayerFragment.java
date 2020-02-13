@@ -1,48 +1,33 @@
 package com.example.and_p4_bakeking.ui;
 
-import android.content.Context;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.and_p4_bakeking.R;
-import com.example.and_p4_bakeking.models.Recipe;
 import com.example.and_p4_bakeking.models.Step;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
-import java.util.ArrayList;
 
 public class ExoPlayerFragment extends Fragment implements Player.EventListener {
     private static final String LOG_TAG = ExoPlayerFragment.class.getSimpleName();
@@ -65,11 +50,11 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             mCurrentStep = savedInstanceState.getParcelable(CURRENT_STEP_STATE);
-        }else {
+        } else {
             Bundle bundle = this.getArguments();
-            if(bundle != null){
+            if (bundle != null) {
                 mCurrentStep = bundle.getParcelable(STEP_BUNDLE_KEY);
             }
         }
@@ -82,11 +67,11 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView =  inflater.inflate(R.layout.fragment_exoplayer, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_exoplayer, container, false);
         mPlayerView = rootView.findViewById(R.id.playerView);
 
         //Check if a video is already playing and seek Exoplayer there
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             mExoplayer.setPlayWhenReady(savedInstanceState.getBoolean(PLAYER_IS_READY_KEY));
             mExoplayer.seekTo(savedInstanceState.getLong(PLAYER_CURRENT_POS_KEY));
         } else {
@@ -106,9 +91,9 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
         mMediaSession.setMediaButtonReceiver(null);
         mStateBuilder = new PlaybackStateCompat.Builder().setActions(
                 PlaybackStateCompat.ACTION_PLAY |
-                PlaybackStateCompat.ACTION_PAUSE |
-                PlaybackStateCompat.ACTION_PLAY_PAUSE |
-                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS);
+                        PlaybackStateCompat.ACTION_PAUSE |
+                        PlaybackStateCompat.ACTION_PLAY_PAUSE |
+                        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS);
         mMediaSession.setPlaybackState((mStateBuilder.build()));
         //Handle callbacks in the PlaySessionCallback inner class
         mMediaSession.setCallback(new PlayerSessionCallback());
@@ -118,11 +103,11 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
     //Initialize the Exoplayer
     //@param Uri of the video to play
     private void initMediaPlayer(Uri videoUri) {
-        if (mExoplayer == null){
-        //Create an instance of the Exoplayer
+        if (mExoplayer == null) {
+            //Create an instance of the Exoplayer
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
-            DefaultRenderersFactory defaultRenderersFactory= new DefaultRenderersFactory(getContext());
+            DefaultRenderersFactory defaultRenderersFactory = new DefaultRenderersFactory(getContext());
             mExoplayer = ExoPlayerFactory.newSimpleInstance(getContext(), defaultRenderersFactory, trackSelector, loadControl);
             mPlayerView.setPlayer(mExoplayer);
             //Set the Exoplayer to listen to fragment changes
@@ -133,9 +118,9 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
             MediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                     .createMediaSource(videoUri);
             mExoplayer.prepare(mediaSource);
-            if (getResources().getConfiguration().smallestScreenWidthDp >= 600){
+            if (getResources().getConfiguration().smallestScreenWidthDp >= 600) {
                 mExoplayer.setPlayWhenReady(false);
-            }else {
+            } else {
                 mExoplayer.setPlayWhenReady(true);
             }
 
@@ -143,7 +128,7 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
     }
 
     private void releasePlayer() {
-        if (mExoplayer != null){
+        if (mExoplayer != null) {
             mExoplayer.stop();
             mExoplayer.release();
             mExoplayer = null;
@@ -166,14 +151,9 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
     public void onDestroy() {
         super.onDestroy();
         releasePlayer();
-        if(mMediaSession != null){
+        if (mMediaSession != null) {
             mMediaSession.setActive(false);
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
 
@@ -193,14 +173,14 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         mPlayerView.hideController();
-        if((playbackState == Player.STATE_READY) && playWhenReady) {
+        if ((playbackState == Player.STATE_READY) && playWhenReady) {
             mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
                     mExoplayer.getCurrentPosition(), 1f);
-        } else if ((playbackState == Player.STATE_READY)){
+        } else if ((playbackState == Player.STATE_READY)) {
             mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
                     mExoplayer.getCurrentPosition(), 1f);
-        } else if(playbackState == Player.STATE_ENDED){
-            if (getResources().getConfiguration().smallestScreenWidthDp <= 600){
+        } else if (playbackState == Player.STATE_ENDED) {
+            if (getResources().getConfiguration().smallestScreenWidthDp <= 600) {
                 getActivity().onBackPressed();
             }
         }
@@ -212,22 +192,21 @@ public class ExoPlayerFragment extends Fragment implements Player.EventListener 
     //Media Session callbacks for external clients
     private class PlayerSessionCallback extends MediaSessionCompat.Callback {
         @Override
-        public void onPlay(){
+        public void onPlay() {
             mExoplayer.setPlayWhenReady(true);
         }
 
         @Override
-        public void onPause(){
+        public void onPause() {
             mExoplayer.setPlayWhenReady(false);
         }
 
         @Override
-        public void onSkipToPrevious(){
+        public void onSkipToPrevious() {
             mExoplayer.seekTo(0);
         }
 
     }
-
 
 
 }

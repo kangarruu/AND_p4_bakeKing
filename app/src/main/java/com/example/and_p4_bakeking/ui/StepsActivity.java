@@ -7,11 +7,9 @@ import androidx.fragment.app.FragmentManager;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewOverlay;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,16 +26,14 @@ import moe.feng.common.stepperview.VerticalStepperItemView;
 import moe.feng.common.stepperview.VerticalStepperView;
 
 public class StepsActivity extends AppCompatActivity implements IStepperAdapter {
-    private static final String LOG_TAG = StepsActivity.class.getSimpleName();
-
     public static final String RECIPE_PARCEL = "recipe_parcel_key";
     public static final String STEP_PARCEL = "step_parcel_key";
+    private static final String LOG_TAG = StepsActivity.class.getSimpleName();
     private static final String BUNDLE_KEY = "bundle_key";
     private static final String STEP_BUNDLE_KEY = "step_bundle_key";
     private static final String RECIPE_STATE_KEY = "recipe_state";
-
-    private Recipe mRecipeSelected;
-    private Step currentStepObject;
+    private static final String SHARED_PREFS = "shared_preferences";
+    private static final String SP_RECIPE_KEY = "shared_prefs_recipe_key";
     ArrayList<Step> mStepsList;
     VerticalStepperView mStepperView;
     FragmentManager fragmentManager;
@@ -46,6 +42,8 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter 
     StepsFragment stepsFragment;
     View mIngredientsView;
     View mExoplayerView;
+    private Recipe mRecipeSelected;
+    private Step currentStepObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +55,13 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter 
         } else {
             //Get intent and extras from MainActivity
             Intent getClickedRecipeFromMAin = getIntent();
-            if (getClickedRecipeFromMAin.hasExtra(RECIPE_PARCEL)){
+            if (getClickedRecipeFromMAin.hasExtra(RECIPE_PARCEL)) {
                 mRecipeSelected = getClickedRecipeFromMAin.getParcelableExtra(RECIPE_PARCEL);
             }
         }
 
         //Set the title of the action bar to the selected recipe name
-        if (null != getSupportActionBar()){
+        if (null != getSupportActionBar()) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setTitle(mRecipeSelected.getName());
@@ -76,13 +74,13 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter 
         mStepperView.setStepperAdapter(this);
 
         //Instantiate the fragmentManager
-        fragmentManager  = getSupportFragmentManager();
+        fragmentManager = getSupportFragmentManager();
 
         mIngredientsView = findViewById(R.id.ingredient_frag_container);
 
         //For tablet layouts launch the ingredientsFragment
         // for display outside of the stepper
-        if (isTabletLayout()){
+        if (isTabletLayout()) {
             updateCurrentStep();
             launchIngredientsFragment();
         }
@@ -107,7 +105,7 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter 
     //method for displaying getting size of steps ArrayList in stepper
     @Override
     public int size() {
-        if(null == mStepsList){
+        if (null == mStepsList) {
             return 0;
         } else {
             return mStepsList.size();
@@ -161,19 +159,19 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter 
             nextButton.setText(getString(R.string.step_list_item_btn_lets_go));
             contentView.setVisibility(View.GONE);
 
-            if (!isTabletLayout()){
+            if (!isTabletLayout()) {
                 launchIngredientsFragment();
             } else {
                 contentView.setVisibility(View.VISIBLE);
                 contentView.setText(R.string.step_gather_ingredients);
             }
-        //hide the ingredientsFragment if it's not the first step
-        }  else {
+            //hide the ingredientsFragment if it's not the first step
+        } else {
             hideIngredientsFragment();
         }
 
         //Adjust tint of the buttons during last step
-        if(currentStepObject.getId() == mStepsList.size() -1) {
+        if (currentStepObject.getId() == mStepsList.size() - 1) {
             nextButton.setBackgroundTintList(getResources().getColorStateList(R.color.material_grey_500));
             backButton.setBackgroundTintList(getResources().getColorStateList(R.color.material_blue_500));
         }
@@ -200,7 +198,7 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter 
             }
         });
 
-         return viewToInflate;
+        return viewToInflate;
     }
 
     private void launchIngredientsFragment() {
@@ -215,7 +213,7 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter 
     }
 
     private void hideIngredientsFragment() {
-        if (isTabletLayout()){
+        if (isTabletLayout()) {
             mIngredientsView.setVisibility(View.GONE);
             launchStepFragment();
         }
@@ -243,7 +241,7 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter 
                 .commit();
     }
 
-    private void updateCurrentStep(){
+    private void updateCurrentStep() {
         int stepPosition = mStepperView.getCurrentStep();
         currentStepObject = mStepsList.get(stepPosition);
         if (isTabletLayout() && currentStepObject.hasVideo()) {
@@ -252,12 +250,8 @@ public class StepsActivity extends AppCompatActivity implements IStepperAdapter 
 
     }
 
-    public Boolean isTabletLayout(){
-        if (getResources().getConfiguration().smallestScreenWidthDp >= 600){
-            return true;
-        } else {
-            return false;
-        }
+    public Boolean isTabletLayout() {
+        return getResources().getConfiguration().smallestScreenWidthDp >= 600;
     }
 
 

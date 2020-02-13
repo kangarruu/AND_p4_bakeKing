@@ -15,7 +15,6 @@ import com.example.and_p4_bakeking.R;
 import com.example.and_p4_bakeking.models.Step;
 
 
-
 public class StepsFragment extends Fragment {
     private static final String LOG_TAG = StepsFragment.class.getSimpleName();
 
@@ -34,7 +33,7 @@ public class StepsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             mCurrentStep = savedInstanceState.getParcelable(CURRENT_STEP_PARCEL);
         } else {
             Bundle bundle = this.getArguments();
@@ -62,7 +61,6 @@ public class StepsFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putParcelable(CURRENT_STEP_STATE, mCurrentStep);
     }
-
 
 
 }

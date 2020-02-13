@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Window;
 import android.view.WindowManager;
 
 import com.example.and_p4_bakeking.R;
@@ -26,12 +25,12 @@ public class VideoActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_video);
 
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             mCurrentStep = savedInstanceState.getParcelable(STEP_STATE_KEY);
         } else {
             //Get intent and extras from StepActivity
             Intent intentFromStepActivity = getIntent();
-            if (intentFromStepActivity.hasExtra(StepsActivity.STEP_PARCEL)){
+            if (intentFromStepActivity.hasExtra(StepsActivity.STEP_PARCEL)) {
                 mCurrentStep = intentFromStepActivity.getParcelableExtra(StepsActivity.STEP_PARCEL);
             }
 
